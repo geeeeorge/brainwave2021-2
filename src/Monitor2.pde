@@ -69,8 +69,8 @@ void draw(){
   for(int ch = 0; ch < N_CHANNELS; ch++){
     text(LABELS[ch], offsetX[ch], offsetY[ch]);
   }
-
 }
+
 // museから来た信号を処理
 void oscEvent(OscMessage msg){
   float data;
