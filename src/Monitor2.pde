@@ -8,10 +8,12 @@ final float DISPLAY_SCALE = - 100.0;
 final String[] LABELS = new String[] {
   "TP9", "FP1", "FP2", "TP10"
 };
+final String[] Pattern_List = new String[] {
+  "/muse/elements/alpha_relative", "/muse/elements/beta_relative"
+};
 
 final color BG_COLOR = color(255, 255, 255);
 final color AXIS_COLOR = color(255, 0, 0);
-// final color GRAPH_COLOR = color(0, 0, 255);
 final color[] GRAPH_COLORS = { color(255, 0, 0), color(0, 255, 0) };
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
@@ -20,8 +22,7 @@ final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
 
 float[][][] buffer = new float[N_BANDS][N_CHANNELS][BUFFER_SIZE];
-// int pointer = 0;
-int[] pointer = { 0, 0, 0, 0, 0 };
+int[] pointer = { 0, 0 };
 float[] offsetX = new float[N_CHANNELS];
 float[] offsetY = new float[N_CHANNELS];
 
@@ -75,14 +76,7 @@ void oscEvent(OscMessage msg){
   float data;
   String pattern = "";
   for(int band = 0; band < N_BANDS; band++) {
-    switch (band) {
-      case 0:
-        pattern = "/muse/elements/alpha_relative";
-        break;
-      case 1:
-        pattern = "/muse/elements/beta_relative";
-        break;
-    }
+    pattern = Pattern_List[band];
     if(msg.checkAddrPattern(pattern)){
       for(int ch = 0; ch < N_CHANNELS; ch++){
         data = msg.get(ch).floatValue();
