@@ -1,2 +1,2 @@
-# bmi-2021
-bmiのリポジトリ
+# brainwave2021-2
+brainwave2021-2のリポジトリ
