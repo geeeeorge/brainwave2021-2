@@ -8,6 +8,7 @@ final float DISPLAY_SCALE = - 100.0;
 final String[] LABELS = new String[] {
   "TP9", "FP1", "FP2", "TP10"
 };
+// α波とβ波のパス
 final String[] Pattern_List = new String[] {
   "/muse/elements/alpha_relative", "/muse/elements/beta_relative"
 };
