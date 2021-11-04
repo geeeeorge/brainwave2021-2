@@ -16,7 +16,7 @@ final String[] Pattern_List = new String[] {
 
 final color BG_COLOR = color(255, 255, 255);
 final color AXIS_COLOR = color(255, 0, 0);
-final color[] GRAPH_COLORS = { color(255, 0, 0), color(0, 255, 0) };
+final color GRAPH_COLOR = color(0, 255, 0);
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
 
@@ -60,16 +60,16 @@ void draw(){
   //     }
   //   }
   // }
-  for(int band = 0; band < N_BANDS; band++){
-    for(int t = 0; t < BUFFER_SIZE; t++){
-      stroke(GRAPH_COLORS[band]);
-      x1 = offsetX + t;
-      y1 = offsetY + buffer2[(t + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
-      x2 = offsetX + t + 1;
-      y2 = offsetY + buffer2[(t + 1 + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
-      line(x1, y1, x2, y2);
-    }
+
+  for(int t = 0; t < BUFFER_SIZE; t++){
+    stroke(GRAPH_COLOR);
+    x1 = offsetX + t;
+    y1 = offsetY + buffer2[(t + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
+    x2 = offsetX + t + 1;
+    y2 = offsetY + buffer2[(t + 1 + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
+    line(x1, y1, x2, y2);
   }
+
 
   // 軸を表示
   // for(int ch = 0; ch < N_CHANNELS; ch++){
