@@ -35,7 +35,6 @@ final int SHOW_TIME = 1;  // 文字を表示する時間間隔
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
 
-
 float[][] buffer = new float[N_BANDS][BUFFER_SIZE];
 float[] buffer2 = new float[BUFFER_SIZE];
 int pointer = 0;
@@ -43,9 +42,6 @@ float offsetX;
 float offsetY;
 float offsetX_text;
 float offsetY_text;
-String[] text = new String[] {
-  "aaaaaaaaaa", "iiiiiiiiiiii", "uuuuuuuuuuu"
-};
 String[] text_list;
 int time = 0;
 
