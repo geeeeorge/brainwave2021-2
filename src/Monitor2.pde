@@ -39,6 +39,28 @@ void setup(){
   }
 }
 
+// もうよくわからんので、beta/alphaが正規分布に従ってると仮定
+void float int[] test(buffer){
+  float x_sum=0;
+  float x_squared_sum=0;
+
+  for(int ch = 0; ch<2; ch++){
+    for(int t=0; t<length(buffer); t++){
+      x_sum+=buffer[ch][t];
+      x_squared_sum+=buffer[ch][t];
+    }
+  }
+  
+  int basic_textsize = 
+  int[] values = {basic_textsize, average, variance};
+
+  return 
+
+}
+void scale(){
+
+
+}
 void draw(){
   float x1, y1, x2, y2;
   background(BG_COLOR);
