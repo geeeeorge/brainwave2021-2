@@ -1,11 +1,20 @@
+import java.io.FileReader; 
+import java.io.BufferedReader; 
+import java.io.IOException;
 import oscP5.*;
 import netP5.*;
+
+
+// TODO Monitorのパスを取ってくる必要がある
+final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
 final int BUFFER_SIZE = 220;
 final float DISPLAY_SCALE = - 100.0;
+
 final String Label = "β/α";
+
 // α波とβ波のパス
 final String[] Pattern_List = new String[] {
   "/muse/elements/alpha_relative", "/muse/elements/beta_relative"
@@ -13,9 +22,15 @@ final String[] Pattern_List = new String[] {
 
 final color BG_COLOR = color(255, 255, 255);
 final color AXIS_COLOR = color(255, 0, 0);
+
 final color GRAPH_COLOR = color(0, 255, 0);
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
+final color TEXT_COLOR = color(0, 0, 0);
+final int TEXT_SIZE = 21;
+final int MAX_TEXT_LEN = 100;
+final int FRAME_RATE = 30;
+final int SHOW_TIME = 1;  // 文字を表示する時間間隔
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
@@ -25,14 +40,26 @@ float[] buffer2 = new float[BUFFER_SIZE];
 int pointer = 0;
 float offsetX;
 float offsetY;
+float offsetX_text;
+float offsetY_text;
+String[] text_list;
+int time = 0;
+
 
 // 最初に一回実行
 void setup(){
   size(1000, 600);
-  frameRate(30);
+  frameRate(FRAME_RATE);
   smooth();
   offsetX = width * 2 / 3;
   offsetY = height * 3 / 4;
+  offsetX_text = width * 1 / 6;  // ここは変更の余地あり
+  offsetY_text = height * 1 / 2;
+  // カレントディレクトリがホームになっちゃってる
+  // String userDir = System.getProperty("user.dir");
+  // System.out.println(userDir);
+  NameReader name_reader = new NameReader();
+  text_list = name_reader.read();
 }
 
 // 描画
@@ -59,6 +86,45 @@ void draw(){
   fill(LABEL_COLOR); // 図形の色
   textSize(LABEL_SIZE);
   text(Label, offsetX, offsetY);
+  
+  // text読み込み
+  fill(TEXT_COLOR);
+  textSize(TEXT_SIZE);
+  int i = time / (FRAME_RATE * SHOW_TIME);
+  try {
+  text(text_list[i], offsetX_text, offsetY_text);
+  } catch (NullPointerException e) {
+    exit();
+  }
+
+  time++;
+}
+
+
+public class NameReader {
+  String[] read() {
+    //ファイル名の設定
+    String fileName = TEXT_NAME;
+    String[] res = new String[MAX_TEXT_LEN];
+    try {
+      FileReader fr = new FileReader(fileName);
+      BufferedReader reader = new BufferedReader(fr);
+
+      int count = 0;
+      while (reader.ready()) {
+        String text = reader.readLine();
+        res[count] = text;
+        count++;
+      }
+       //ファイルのクローズ
+      reader.close();
+      return res;
+    } catch (IOException e) {  //例外処理
+      System.out.println("oh my god");
+      System.out.println(e);
+      return res;  // 空のresponse
+    }
+  }
 }
 
 // museから来た信号を処理
