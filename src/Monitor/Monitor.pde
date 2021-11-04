@@ -1,6 +1,12 @@
+import java.io.FileReader; 
+import java.io.BufferedReader; 
+import java.io.IOException;
 import oscP5.*;
 import netP5.*;
 
+
+// TODO Monitorのパスを取ってくる必要がある
+final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
 final int BUFFER_SIZE = 220;
@@ -18,6 +24,9 @@ final color AXIS_COLOR = color(255, 0, 0);
 final color[] GRAPH_COLORS = { color(255, 0, 0), color(0, 255, 0) };
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
+final color TEXT_COLOR = color(0, 0, 0);
+final int TEXT_SIZE = 21;
+final int MAX_TEXT_LEN = 100;
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
@@ -26,6 +35,10 @@ float[][][] buffer = new float[N_BANDS][N_CHANNELS][BUFFER_SIZE];
 int[] pointer = { 0, 0 };
 float[] offsetX = new float[N_CHANNELS];
 float[] offsetY = new float[N_CHANNELS];
+String[] text = new String[] {
+  "aaaaaaaaaa", "iiiiiiiiiiii", "uuuuuuuuuuu"
+};
+String[] text_list;
 
 // 最初に一回実行
 void setup(){
@@ -36,12 +49,17 @@ void setup(){
     offsetX[ch] = (width / N_CHANNELS) * ch + 15;
     offsetY[ch] = height / 2;
   }
+  // カレントディレクトリがホームになっちゃってる
+  // String userDir = System.getProperty("user.dir");
+  // System.out.println(userDir);
+  NameReader name_reader = new NameReader();
+  text_list = name_reader.read();
 }
 
 void draw(){
-  float x1, y1, x2, y2;
+  //float x1, y1, x2, y2;
   background(BG_COLOR);
-
+  /*
   for(int band = 0; band < N_BANDS; band++){
     for(int ch = 0; ch < N_CHANNELS; ch++){
       for(int t = 0; t < BUFFER_SIZE; t++){
@@ -70,7 +88,52 @@ void draw(){
   for(int ch = 0; ch < N_CHANNELS; ch++){
     text(LABELS[ch], offsetX[ch], offsetY[ch]);
   }
+  */
+
+  // text読み込み
+  fill(TEXT_COLOR);
+  textSize(TEXT_SIZE);
+  //text(text_list[0], offsetX[0], offsetY[0]);
+
+  for(int i = 0; i < MAX_TEXT_LEN; i++){
+    if (text_list[i] == null) break;
+    text(text_list[i], offsetX[0], offsetY[0]);
+    try {
+      Thread.sleep(10000);  // 1秒後に次行く
+    } catch (InterruptedException e) {
+    }
+  }
+
 }
+
+
+// processingの仕様的に，外部ファイルの読み込みをしようとすると，FileNotFoundExceptionになりそう．
+public class NameReader {
+  String[] read() {
+    //ファイル名の設定
+    String fileName = TEXT_NAME;
+    String[] res = new String[MAX_TEXT_LEN];
+    try {
+      FileReader fr = new FileReader(fileName);
+      BufferedReader reader = new BufferedReader(fr);
+
+      int count = 0;
+      while (reader.ready()) {
+        String text = reader.readLine();
+        res[count] = text;
+        count++;
+      }
+       //ファイルのクローズ
+      reader.close();
+      return res;
+    } catch (IOException e) {  //例外処理
+      System.out.println("oh my god");
+      System.out.println(e);
+      return res;  // 空のresponse
+    }
+  }
+}
+
 
 // museから来た信号を処理
 void oscEvent(OscMessage msg){
