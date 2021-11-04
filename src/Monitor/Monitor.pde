@@ -63,9 +63,9 @@ void draw(){
 
 // museから来た信号を処理
 void oscEvent(OscMessage msg){
-  float data = 0;
   String pattern = "";
   for(int band = 0; band < N_BANDS; band++) {
+    float data = 0;
     pattern = Pattern_List[band];
     if(msg.checkAddrPattern(pattern)){
       for(int ch = 0; ch < N_CHANNELS; ch++){
