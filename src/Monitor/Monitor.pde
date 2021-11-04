@@ -69,8 +69,12 @@ void oscEvent(OscMessage msg){
     data = 0;
     pattern = Pattern_List[band];
     if(msg.checkAddrPattern(pattern)){
-      for(int ch = 0; ch < N_CHANNELS; ch++){
-        data += msg.get(ch).floatValue();
+      for(int ch = 1; ch < N_CHANNELS; ch++) {  // channel0がいかれてるので，1,2,3を使用
+        if (Float.isNaN(msg.get(ch).floatValue())) {  // channelが機能していない時にNanではなく0.0が欲しいため分岐
+          data += 0;
+        } else {
+          data += msg.get(ch).floatValue();
+        }
       }
       buffer[band][pointer] = data;
     }
