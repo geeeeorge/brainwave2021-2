@@ -6,8 +6,8 @@ import netP5.*;
 import java.util.Arrays;
 
 // TODO Monitorのパスを取ってくる必要がある
-// final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
-final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt";
+final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
+// final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt";
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
@@ -31,7 +31,8 @@ final color TEXT_COLOR = color(0, 0, 0);
 int TEXT_SIZE = 21;
 final int MAX_TEXT_LEN = 100;
 final int FRAME_RATE = 30;
-final int SHOW_TIME = 1;  // 文字を表示する時間間隔
+final int SHOW_TIME = 5;  // 文字を表示する時間間隔
+final int WAITING_TIME = 200;
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
@@ -71,14 +72,19 @@ void setup(){
 }
 
 // buffer2の合計値に比例した字幕サイズを返す
-void subSize(float avgBuffer) {
+int subSize(float avgBuffer) {
   if (avgBuffer > 0) {
-    TEXT_SIZE = int(avgBuffer * 30);
+    TEXT_SIZE = int(avgBuffer * 24);
   }
+  return TEXT_SIZE;
 }
 
 // 描画
 void draw(){
+  time++;
+  if (time < FRAME_RATE * WAITING_TIME) {
+    return;
+  }
   float x1, y1, x2, y2;
   background(BG_COLOR);
   for(int t = 0; t < BUFFER_SIZE; t++){
@@ -104,16 +110,16 @@ void draw(){
 
   // text読み込み
   fill(TEXT_COLOR);
-  subSize(avgBuffer);
+  TEXT_SIZE = subSize(avgBuffer);
+  // System.out.println(TEXT_SIZE);
   textSize(TEXT_SIZE);
-  int i = time / (FRAME_RATE * SHOW_TIME);
+  int i = (time - FRAME_RATE * WAITING_TIME) / (FRAME_RATE * SHOW_TIME);
   try {
   text(text_list[i], offsetX_text, offsetY_text);
   } catch (NullPointerException e) {
     exit();
   }
 
-  time++;
 }
 
 
@@ -162,8 +168,11 @@ void oscEvent(OscMessage msg){
     }
   }
   sumBuffer -= buffer2[pointer]; // 一番古い値を引く
-  buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+  if (!Float.isNaN(buffer[1][pointer] / buffer[0][pointer]) && !Float.isInfinite(buffer[1][pointer] / buffer[0][pointer])){
+    buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+  }
   sumBuffer += buffer2[pointer]; // 一番新しい値を加える
   avgBuffer = sumBuffer / BUFFER_SIZE;
+  System.out.println(sumBuffer);
   pointer = (pointer + 1) % BUFFER_SIZE;
 }
