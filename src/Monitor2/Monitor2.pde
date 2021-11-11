@@ -1,13 +1,12 @@
-import java.io.FileReader;
-import java.io.BufferedReader;
+import java.io.FileReader; 
+import java.io.BufferedReader; 
 import java.io.IOException;
 import oscP5.*;
 import netP5.*;
-import java.util.Arrays;
+
 
 // TODO Monitorのパスを取ってくる必要がある
-// final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
-final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt";
+final String TEXT_NAME = "/Users/takatsukiryota/Desktop/Lectures/応用プロジェクト１/brainwave2021-2/src/text/textWithOneLine.txt";
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
@@ -28,7 +27,7 @@ final color GRAPH_COLOR = color(0, 255, 0);
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
 final color TEXT_COLOR = color(0, 0, 0);
-int TEXT_SIZE = 21;
+final int TEXT_SIZE = 21;
 final int MAX_TEXT_LEN = 100;
 final int FRAME_RATE = 30;
 final int SHOW_TIME = 1;  // 文字を表示する時間間隔
@@ -38,10 +37,6 @@ OscP5 oscP5 = new OscP5(this, PORT);
 
 float[][] buffer = new float[N_BANDS][BUFFER_SIZE];
 float[] buffer2 = new float[BUFFER_SIZE];
-
-float sumBuffer = 0; // 値の合計値
-float avgBuffer = 0;
-
 int pointer = 0;
 float offsetX;
 float offsetY;
@@ -49,11 +44,12 @@ float offsetX_text;
 float offsetY_text;
 String[] text_list;
 int time = 0;
+int count = 0;
+int story_num;
 
 
 // 最初に一回実行
 void setup(){
-  Arrays.fill(buffer2, 0); // 合計値計算をラクにするため、初期値を0に。
   size(1000, 600);
   frameRate(FRAME_RATE);
   smooth();
@@ -68,13 +64,6 @@ void setup(){
   textFont(font);
   NameReader name_reader = new NameReader();
   text_list = name_reader.read();
-}
-
-// buffer2の合計値に比例した字幕サイズを返す
-void subSize(float avgBuffer) {
-  if (avgBuffer > 0) {
-    TEXT_SIZE = int(avgBuffer * 30);
-  }
 }
 
 // 描画
@@ -101,14 +90,14 @@ void draw(){
   fill(LABEL_COLOR); // 図形の色
   textSize(LABEL_SIZE);
   text(Label, offsetX, offsetY);
-
+  
   // text読み込み
   fill(TEXT_COLOR);
-  subSize(avgBuffer);
   textSize(TEXT_SIZE);
-  int i = time / (FRAME_RATE * SHOW_TIME);
+  offsetX_text-=2;
+  // int i = time / (FRAME_RATE * SHOW_TIME);
   try {
-  text(text_list[i], offsetX_text, offsetY_text);
+  text(text_list[story_num], offsetX_text, offsetY_text);
   } catch (NullPointerException e) {
     exit();
   }
@@ -122,16 +111,17 @@ public class NameReader {
     //ファイル名の設定
     String fileName = TEXT_NAME;
     String[] res = new String[MAX_TEXT_LEN];
+    
     try {
       FileReader fr = new FileReader(fileName);
       BufferedReader reader = new BufferedReader(fr);
 
-      int count = 0;
       while (reader.ready()) {
         String text = reader.readLine();
         res[count] = text;
         count++;
       }
+      story_num=int(random(-0.5,count-0.5));
        //ファイルのクローズ
       reader.close();
       return res;
@@ -161,9 +151,6 @@ void oscEvent(OscMessage msg){
       buffer[band][pointer] = data;
     }
   }
-  sumBuffer -= buffer2[pointer]; // 一番古い値を引く
   buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
-  sumBuffer += buffer2[pointer]; // 一番新しい値を加える
-  avgBuffer = sumBuffer / BUFFER_SIZE;
   pointer = (pointer + 1) % BUFFER_SIZE;
 }
