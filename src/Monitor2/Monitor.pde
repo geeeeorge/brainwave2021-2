@@ -6,7 +6,7 @@ import netP5.*;
 
 
 // TODO Monitorのパスを取ってくる必要がある
-final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
+final String TEXT_NAME = "/Users/takatsukiryota/Desktop/Lectures/応用プロジェクト１/brainwave2021-2/src/text/textWithOneLine.txt";
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
@@ -44,6 +44,8 @@ float offsetX_text;
 float offsetY_text;
 String[] text_list;
 int time = 0;
+int count = 0;
+int story_num;
 
 
 // 最初に一回実行
@@ -92,9 +94,10 @@ void draw(){
   // text読み込み
   fill(TEXT_COLOR);
   textSize(TEXT_SIZE);
-  int i = time / (FRAME_RATE * SHOW_TIME);
+  offsetX_text-=2;
+  // int i = time / (FRAME_RATE * SHOW_TIME);
   try {
-  text(text_list[i], offsetX_text, offsetY_text);
+  text(text_list[story_num], offsetX_text, offsetY_text);
   } catch (NullPointerException e) {
     exit();
   }
@@ -108,16 +111,17 @@ public class NameReader {
     //ファイル名の設定
     String fileName = TEXT_NAME;
     String[] res = new String[MAX_TEXT_LEN];
+    
     try {
       FileReader fr = new FileReader(fileName);
       BufferedReader reader = new BufferedReader(fr);
 
-      int count = 0;
       while (reader.ready()) {
         String text = reader.readLine();
         res[count] = text;
         count++;
       }
+      story_num=int(random(-0.5,count-0.5));
        //ファイルのクローズ
       reader.close();
       return res;
