@@ -41,6 +41,7 @@ float[] buffer2 = new float[BUFFER_SIZE];
 
 float sumBuffer = 0; // 値の合計値
 float avgBuffer = 0;
+Arrays.fill(buffer2, 0); // 合計値計算をラクにするため、初期値を0に。
 
 int pointer = 0;
 float offsetX;
@@ -53,7 +54,6 @@ int time = 0;
 
 // 最初に一回実行
 void setup(){
-  Arrays.fill(buffer2, 0); // 合計値計算をラクにするため、初期値を0に。
   size(1000, 600);
   frameRate(FRAME_RATE);
   smooth();
@@ -72,9 +72,7 @@ void setup(){
 
 // buffer2の合計値に比例した字幕サイズを返す
 void subSize(float avgBuffer) {
-  if (avgBuffer > 0) {
-    TEXT_SIZE = int(avgBuffer * 30);
-  }
+  TEXT_SIZE = int(avgBuffer * 30);
 }
 
 // 描画
