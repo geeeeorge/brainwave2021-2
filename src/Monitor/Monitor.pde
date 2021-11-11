@@ -53,11 +53,13 @@ void setup(){
   smooth();
   offsetX = width * 2 / 3;
   offsetY = height * 3 / 4;
-  offsetX_text = width * 1 / 6;  // ここは変更の余地あり
+  offsetX_text = width * 1 / 8;  // ここは変更の余地あり
   offsetY_text = height * 1 / 2;
   // カレントディレクトリがホームになっちゃってる
   // String userDir = System.getProperty("user.dir");
   // System.out.println(userDir);
+  PFont font = createFont("Meiryo", 50);
+  textFont(font);
   NameReader name_reader = new NameReader();
   text_list = name_reader.read();
 }
