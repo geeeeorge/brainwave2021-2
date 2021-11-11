@@ -37,6 +37,8 @@ OscP5 oscP5 = new OscP5(this, PORT);
 
 float[][] buffer = new float[N_BANDS][BUFFER_SIZE];
 float[] buffer2 = new float[BUFFER_SIZE];
+Arrays.fill(buffer2, 0); // 合計値計算をラクにするため、初期値を0に。
+float sumBuffer = 0;
 int pointer = 0;
 float offsetX;
 float offsetY;
@@ -62,6 +64,11 @@ void setup(){
   textFont(font);
   NameReader name_reader = new NameReader();
   text_list = name_reader.read();
+}
+
+// buffer2の合計値に比例した字幕サイズを返す
+int subSize(sumBuffer) {
+
 }
 
 // 描画
@@ -148,5 +155,6 @@ void oscEvent(OscMessage msg){
     }
   }
   buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+  sumBuffer += buffer2[pointer] - buffer2[(pointer + 1) % BUFFER_SIZE];
   pointer = (pointer + 1) % BUFFER_SIZE;
 }
