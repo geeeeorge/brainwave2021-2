@@ -31,7 +31,7 @@ final color TEXT_COLOR = color(0, 0, 0);
 int TEXT_SIZE = 21;
 final int MAX_TEXT_LEN = 100;
 final int FRAME_RATE = 30;
-final int WAITING_TIME = 10;
+final int WAITING_TIME = 60;
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
