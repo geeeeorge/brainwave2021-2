@@ -1,9 +1,9 @@
-import java.io.FileReader; 
-import java.io.BufferedReader; 
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import oscP5.*;
 import netP5.*;
-
+import java.util.Arrays;
 
 // TODO Monitorのパスを取ってくる必要がある
 final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
@@ -88,7 +88,7 @@ void draw(){
   fill(LABEL_COLOR); // 図形の色
   textSize(LABEL_SIZE);
   text(Label, offsetX, offsetY);
-  
+
   // text読み込み
   fill(TEXT_COLOR);
   textSize(TEXT_SIZE);
