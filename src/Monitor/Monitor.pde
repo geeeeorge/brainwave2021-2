@@ -32,7 +32,7 @@ int TEXT_SIZE = 21;
 final int MAX_TEXT_LEN = 100;
 final int FRAME_RATE = 30;
 final int SHOW_TIME = 5;  // 文字を表示する時間間隔
-final int WAITING_TIME = 200;
+final int WAITING_TIME = 10;
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
@@ -55,7 +55,7 @@ int time = 0;
 // 最初に一回実行
 void setup(){
   Arrays.fill(buffer2, 0); // 合計値計算をラクにするため、初期値を0に。
-  size(1000, 600);
+  size(1280, 800);
   frameRate(FRAME_RATE);
   smooth();
   offsetX = width * 2 / 3;
@@ -170,6 +170,7 @@ void oscEvent(OscMessage msg){
   sumBuffer -= buffer2[pointer]; // 一番古い値を引く
   if (!Float.isNaN(buffer[1][pointer] / buffer[0][pointer]) && !Float.isInfinite(buffer[1][pointer] / buffer[0][pointer])){
     buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+    //System.out.println(buffer[1][pointer] / buffer[0][pointer]);
   }
   sumBuffer += buffer2[pointer]; // 一番新しい値を加える
   avgBuffer = sumBuffer / BUFFER_SIZE;
