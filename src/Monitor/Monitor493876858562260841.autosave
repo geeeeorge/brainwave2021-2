@@ -41,7 +41,6 @@ float[] buffer2 = new float[BUFFER_SIZE];
 
 float sumBuffer = 0; // 値の合計値
 float avgBuffer = 0;
-
 int pointer = 0;
 float offsetX;
 float offsetY;
@@ -53,7 +52,10 @@ int time = 0;
 
 // 最初に一回実行
 void setup(){
-  Arrays.fill(buffer2, 0); // 合計値計算をラクにするため、初期値を0に。
+  //for (int i = 0; i < BUFFER_SIZE; i++) {
+  //  buffer2[i] = 0;
+  //}
+  Arrays.fill(buffer2, 0);
   size(1000, 600);
   frameRate(FRAME_RATE);
   smooth();
