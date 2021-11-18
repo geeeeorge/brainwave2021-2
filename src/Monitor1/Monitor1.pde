@@ -32,7 +32,7 @@ int TEXT_SIZE = 21;
 final int MAX_TEXT_LEN = 100;
 final int FRAME_RATE = 30;
 final int SHOW_TIME = 5;  // 文字を表示する時間間隔
-final int WAITING_TIME = 60;
+final int WAITING_TIME = 10;
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
@@ -164,7 +164,6 @@ void oscEvent(OscMessage msg){
     pattern = Pattern_List[band];
     if(msg.checkAddrPattern(pattern)){
       for(int ch = 0; ch < N_CHANNELS; ch++) {  // channel0がいかれてるので，1,2,3を使用
-        System.out.println(msg.get(ch).floatValue());
         if (Float.isNaN(msg.get(ch).floatValue())) {  // channelが機能していない時にNanではなく0.0が欲しいため分岐
           data += 0;
         } else {
