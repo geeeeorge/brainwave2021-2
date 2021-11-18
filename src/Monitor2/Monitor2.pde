@@ -56,7 +56,7 @@ int story_num;
 
 // 最初に一回実行
 void setup(){
-  size(1280, 800);
+  size(1280, 200);
   frameRate(FRAME_RATE);
   smooth();
   offsetX = width * 1 / 10;
@@ -88,22 +88,6 @@ void draw(){
   }
   float x1, y1, x2, y2;
   background(BG_COLOR);
-  // for(int t = 0; t < BUFFER_SIZE; t++){
-  //   stroke(GRAPH_COLOR);
-  //   x1 = offsetX + t;
-  //   y1 = offsetY + buffer2[(t + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
-  //   x2 = offsetX + t + 1;
-  //   y2 = offsetY + buffer2[(t + 1 + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
-  //   line(x1, y1, x2, y2);
-  // }
-
-  // 軸を表示
-  // stroke(AXIS_COLOR);
-  // x1 = offsetX;
-  // y1 = offsetY;
-  // x2 = offsetX + BUFFER_SIZE;
-  // y2 = offsetY;
-  // line(x1, y1, x2, y2);
 
   fill(LABEL_COLOR);
   textSize(LABEL_SIZE);
@@ -117,7 +101,7 @@ void draw(){
   fill(TEXT_COLOR);
   TEXT_SIZE = subSize(avgBuffer);
   textSize(TEXT_SIZE);
-  offsetX_text-=2;
+  offsetX_text-=5;
   text(text_list[story_num], offsetX_text, offsetY_text);
 }
 
@@ -157,7 +141,7 @@ void oscEvent(OscMessage msg){
     data = 0;
     pattern = Pattern_List[band];
     if(msg.checkAddrPattern(pattern)){
-      for(int ch = 1; ch < N_CHANNELS; ch++) {  // channel0がいかれてるので，1,2,3を使用
+      for(int ch = 0; ch < N_CHANNELS; ch++) {  // channel0がいかれてるので，1,2,3を使用
         if (Float.isNaN(msg.get(ch).floatValue())) {  // channelが機能していない時にNanではなく0.0が欲しいため分岐
           data += 0;
         } else {
