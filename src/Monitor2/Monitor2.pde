@@ -7,8 +7,8 @@ import netP5.*;
 
 // TODO Monitorのパスを取ってくる必要がある
 //final String TEXT_NAME = "/Users/takatsukiryota/Desktop/Lectures/応用プロジェクト１/brainwave2021-2/src/text/textWithOneLine.txt";
-// final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/textWithOneLine.txt";
-final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt"; // 竹内用
+final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/Monitor2.txt";
+// final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt"; // 竹内用
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
