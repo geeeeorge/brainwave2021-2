@@ -1,5 +1,5 @@
-import java.io.FileReader; 
-import java.io.BufferedReader; 
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import oscP5.*;
 import netP5.*;
@@ -7,14 +7,15 @@ import netP5.*;
 
 // TODO Monitorのパスを取ってくる必要がある
 //final String TEXT_NAME = "/Users/takatsukiryota/Desktop/Lectures/応用プロジェクト１/brainwave2021-2/src/text/textWithOneLine.txt";
-final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/textWithOneLine.txt";
+// final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/textWithOneLine.txt";
+final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt"; // 竹内用
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
 final int BUFFER_SIZE = 220;
 final float DISPLAY_SCALE = - 100.0;
 
-final String Label = "β/α";
+final String Label = "現在のテキストサイズ（px）：";
 
 // α波とβ波のパス
 final String[] Pattern_List = new String[] {
@@ -22,9 +23,9 @@ final String[] Pattern_List = new String[] {
 };
 
 final color BG_COLOR = color(255, 255, 255);
-final color AXIS_COLOR = color(255, 0, 0);
+// final color AXIS_COLOR = color(255, 0, 0);
 
-final color GRAPH_COLOR = color(0, 255, 0);
+// final color GRAPH_COLOR = color(0, 255, 0);
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
 final color TEXT_COLOR = color(0, 0, 0);
@@ -55,11 +56,11 @@ int story_num;
 
 // 最初に一回実行
 void setup(){
-  size(1000, 600);
+  size(1280, 800);
   frameRate(FRAME_RATE);
   smooth();
-  offsetX = width * 2 / 3;
-  offsetY = height * 3 / 4;
+  offsetX = width * 1 / 10;
+  offsetY = height * 1 / 10;
   offsetX_text = width * 1 / 8;  // ここは変更の余地あり
   offsetY_text = height * 1 / 2;
   // カレントディレクトリがホームになっちゃってる
@@ -87,27 +88,31 @@ void draw(){
   }
   float x1, y1, x2, y2;
   background(BG_COLOR);
-  for(int t = 0; t < BUFFER_SIZE; t++){
-    stroke(GRAPH_COLOR);
-    x1 = offsetX + t;
-    y1 = offsetY + buffer2[(t + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
-    x2 = offsetX + t + 1;
-    y2 = offsetY + buffer2[(t + 1 + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
-    line(x1, y1, x2, y2);
-  }
+  // for(int t = 0; t < BUFFER_SIZE; t++){
+  //   stroke(GRAPH_COLOR);
+  //   x1 = offsetX + t;
+  //   y1 = offsetY + buffer2[(t + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
+  //   x2 = offsetX + t + 1;
+  //   y2 = offsetY + buffer2[(t + 1 + pointer) % BUFFER_SIZE] * DISPLAY_SCALE;
+  //   line(x1, y1, x2, y2);
+  // }
 
   // 軸を表示
-  stroke(AXIS_COLOR);
-  x1 = offsetX;
-  y1 = offsetY;
-  x2 = offsetX + BUFFER_SIZE;
-  y2 = offsetY;
-  line(x1, y1, x2, y2);
+  // stroke(AXIS_COLOR);
+  // x1 = offsetX;
+  // y1 = offsetY;
+  // x2 = offsetX + BUFFER_SIZE;
+  // y2 = offsetY;
+  // line(x1, y1, x2, y2);
 
-  fill(LABEL_COLOR); // 図形の色
+  fill(LABEL_COLOR);
   textSize(LABEL_SIZE);
   text(Label, offsetX, offsetY);
-  
+
+  fill(color(255, 0, 0));
+  textSize(LABEL_SIZE);
+  text(TEXT_SIZE, offsetX + Label.length() * LABEL_SIZE, offsetY);
+
   // text読み込み
   fill(TEXT_COLOR);
   TEXT_SIZE = subSize(avgBuffer);
@@ -122,7 +127,7 @@ public class NameReader {
     //ファイル名の設定
     String fileName = TEXT_NAME;
     String[] res = new String[MAX_TEXT_LEN];
-    
+
     try {
       FileReader fr = new FileReader(fileName);
       BufferedReader reader = new BufferedReader(fr);
