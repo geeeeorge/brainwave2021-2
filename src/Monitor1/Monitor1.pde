@@ -1,12 +1,13 @@
-import java.io.FileReader; 
-import java.io.BufferedReader; 
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import oscP5.*;
 import netP5.*;
-
+import java.util.Arrays;
 
 // TODO Monitorのパスを取ってくる必要がある
 final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
+// final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt";
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
@@ -27,16 +28,21 @@ final color GRAPH_COLOR = color(0, 255, 0);
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
 final color TEXT_COLOR = color(0, 0, 0);
-final int TEXT_SIZE = 21;
+int TEXT_SIZE = 21;
 final int MAX_TEXT_LEN = 100;
 final int FRAME_RATE = 30;
-final int SHOW_TIME = 1;  // 文字を表示する時間間隔
+final int SHOW_TIME = 5;  // 文字を表示する時間間隔
+final int WAITING_TIME = 60;
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
 
 float[][] buffer = new float[N_BANDS][BUFFER_SIZE];
 float[] buffer2 = new float[BUFFER_SIZE];
+
+float sumBuffer = 0; // 値の合計値
+float avgBuffer = 0;
+
 int pointer = 0;
 float offsetX;
 float offsetY;
@@ -49,7 +55,8 @@ int story_num;
 
 // 最初に一回実行
 void setup(){
-  size(1000, 600);
+  Arrays.fill(buffer2, 0); // 合計値計算をラクにするため、初期値を0に。
+  size(1280, 800);
   frameRate(FRAME_RATE);
   smooth();
   offsetX = width * 2 / 3;
@@ -65,8 +72,20 @@ void setup(){
   text_list = name_reader.read();
 }
 
+// buffer2の合計値に比例した字幕サイズを返す
+int subSize(float avgBuffer) {
+  if (avgBuffer > 0) {
+    TEXT_SIZE = int(avgBuffer * 24);
+  }
+  return TEXT_SIZE;
+}
+
 // 描画
 void draw(){
+  time++;
+  if (time < FRAME_RATE * WAITING_TIME) {
+    return;
+  }
   float x1, y1, x2, y2;
   background(BG_COLOR);
   for(int t = 0; t < BUFFER_SIZE; t++){
@@ -89,18 +108,19 @@ void draw(){
   fill(LABEL_COLOR); // 図形の色
   textSize(LABEL_SIZE);
   text(Label, offsetX, offsetY);
-  
+
   // text読み込み
   fill(TEXT_COLOR);
+  TEXT_SIZE = subSize(avgBuffer);
+  // System.out.println(TEXT_SIZE);
   textSize(TEXT_SIZE);
-  int i = time / (FRAME_RATE * SHOW_TIME);
+  int i = (time - FRAME_RATE * WAITING_TIME) / (FRAME_RATE * SHOW_TIME);
   try {
   text(text_list[i], offsetX_text, offsetY_text);
   } catch (NullPointerException e) {
     exit();
   }
 
-  time++;
 }
 
 
@@ -139,7 +159,8 @@ void oscEvent(OscMessage msg){
     data = 0;
     pattern = Pattern_List[band];
     if(msg.checkAddrPattern(pattern)){
-      for(int ch = 1; ch < N_CHANNELS; ch++) {  // channel0がいかれてるので，1,2,3を使用
+      for(int ch = 0; ch < N_CHANNELS; ch++) {  // channel0がいかれてるので，1,2,3を使用
+        System.out.println(msg.get(ch).floatValue());
         if (Float.isNaN(msg.get(ch).floatValue())) {  // channelが機能していない時にNanではなく0.0が欲しいため分岐
           data += 0;
         } else {
@@ -149,6 +170,12 @@ void oscEvent(OscMessage msg){
       buffer[band][pointer] = data;
     }
   }
-  buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+  sumBuffer -= buffer2[pointer]; // 一番古い値を引く
+  if (!Float.isNaN(buffer[1][pointer] / buffer[0][pointer]) && !Float.isInfinite(buffer[1][pointer] / buffer[0][pointer])){
+    buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+    //System.out.println(buffer[1][pointer] / buffer[0][pointer]);
+  }
+  sumBuffer += buffer2[pointer]; // 一番新しい値を加える
+  avgBuffer = sumBuffer / BUFFER_SIZE;
   pointer = (pointer + 1) % BUFFER_SIZE;
 }
