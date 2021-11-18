@@ -44,6 +44,7 @@ float offsetX_text;
 float offsetY_text;
 String[] text_list;
 int time = 0;
+int story_num;
 
 
 // 最初に一回実行
@@ -118,9 +119,10 @@ public class NameReader {
         res[count] = text;
         count++;
       }
+      story_num=int(random(-0.5,count-0.5));
        //ファイルのクローズ
       reader.close();
-      return res;
+      return res[0].split("@");
     } catch (IOException e) {  //例外処理
       System.out.println("oh my god");
       System.out.println(e);
