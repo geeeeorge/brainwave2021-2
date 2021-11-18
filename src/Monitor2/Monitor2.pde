@@ -6,7 +6,8 @@ import netP5.*;
 
 
 // TODO Monitorのパスを取ってくる必要がある
-final String TEXT_NAME = "/Users/takatsukiryota/Desktop/Lectures/応用プロジェクト１/brainwave2021-2/src/text/textWithOneLine.txt";
+//final String TEXT_NAME = "/Users/takatsukiryota/Desktop/Lectures/応用プロジェクト１/brainwave2021-2/src/text/textWithOneLine.txt";
+final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/textWithOneLine.txt";
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
@@ -27,16 +28,20 @@ final color GRAPH_COLOR = color(0, 255, 0);
 final color LABEL_COLOR = color(0, 0, 0);
 final int LABEL_SIZE = 21;
 final color TEXT_COLOR = color(0, 0, 0);
-final int TEXT_SIZE = 21;
+int TEXT_SIZE = 21;
 final int MAX_TEXT_LEN = 100;
 final int FRAME_RATE = 30;
-final int SHOW_TIME = 1;  // 文字を表示する時間間隔
+final int WAITING_TIME = 60;
 
 final int PORT = 5000;
 OscP5 oscP5 = new OscP5(this, PORT);
 
 float[][] buffer = new float[N_BANDS][BUFFER_SIZE];
 float[] buffer2 = new float[BUFFER_SIZE];
+
+float sumBuffer = 0; // 値の合計値
+float avgBuffer = 0;
+
 int pointer = 0;
 float offsetX;
 float offsetY;
@@ -66,8 +71,20 @@ void setup(){
   text_list = name_reader.read();
 }
 
+// buffer2の合計値に比例した字幕サイズを返す
+int subSize(float avgBuffer) {
+  if (avgBuffer > 0) {
+    TEXT_SIZE = int(avgBuffer * 24);
+  }
+  return TEXT_SIZE;
+}
+
 // 描画
 void draw(){
+  time++;
+  if (time < FRAME_RATE * WAITING_TIME) {
+    return;
+  }
   float x1, y1, x2, y2;
   background(BG_COLOR);
   for(int t = 0; t < BUFFER_SIZE; t++){
@@ -93,16 +110,10 @@ void draw(){
   
   // text読み込み
   fill(TEXT_COLOR);
+  TEXT_SIZE = subSize(avgBuffer);
   textSize(TEXT_SIZE);
   offsetX_text-=2;
-  // int i = time / (FRAME_RATE * SHOW_TIME);
-  try {
   text(text_list[story_num], offsetX_text, offsetY_text);
-  } catch (NullPointerException e) {
-    exit();
-  }
-
-  time++;
 }
 
 
@@ -151,6 +162,12 @@ void oscEvent(OscMessage msg){
       buffer[band][pointer] = data;
     }
   }
-  buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+  sumBuffer -= buffer2[pointer]; // 一番古い値を引く
+  if (!Float.isNaN(buffer[1][pointer] / buffer[0][pointer]) && !Float.isInfinite(buffer[1][pointer] / buffer[0][pointer])){
+    buffer2[pointer] = buffer[1][pointer] / buffer[0][pointer];
+  }
+  sumBuffer += buffer2[pointer]; // 一番新しい値を加える
+  avgBuffer = sumBuffer / BUFFER_SIZE;
+  System.out.println(sumBuffer);
   pointer = (pointer + 1) % BUFFER_SIZE;
 }
