@@ -6,8 +6,8 @@ import netP5.*;
 import java.util.Arrays;
 
 // TODO Monitorのパスを取ってくる必要がある
-// final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/text.txt";
-final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt"; // 竹内用
+final String TEXT_NAME = "Documents/システム創成学科/3A/brainwave2021-2/src/text/Monitor1.txt";
+// final String TEXT_NAME = "Desktop/brainwave2021-2/src/text/text.txt";
 
 final int N_CHANNELS = 4;
 final int N_BANDS = 2;
@@ -50,6 +50,7 @@ float offsetX_text;
 float offsetY_text;
 String[] text_list;
 int time = 0;
+int story_num;
 
 
 // 最初に一回実行
@@ -120,7 +121,7 @@ void draw(){
   int i = (time - FRAME_RATE * WAITING_TIME) / (FRAME_RATE * SHOW_TIME);
   try {
   text(text_list[i], offsetX_text, offsetY_text);
-  } catch (NullPointerException e) {
+  } catch (ArrayIndexOutOfBoundsException e) {
     exit();
   }
 
@@ -142,9 +143,10 @@ public class NameReader {
         res[count] = text;
         count++;
       }
+      story_num=int(random(-0.5,count-0.5));
        //ファイルのクローズ
       reader.close();
-      return res;
+      return res[story_num].split("@");
     } catch (IOException e) {  //例外処理
       System.out.println("oh my god");
       System.out.println(e);
